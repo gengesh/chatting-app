@@ -21,10 +21,10 @@ exports.postSignUp = async (req,res,next) =>{
     phone:phone,
     password:hash,
 },);
- res.status(201).json({message:"successfully created."});
+ res.status(201).json({message:"Successfuly signed up"});
 }catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
-      res.status(409).json({ message: "Email ID already exists!" }); // 409 Conflict status code for duplicate data
+      res.status(409).json({ message: "User already exists, Please Login" }); // 409 Conflict status code for duplicate data
     } else {
       res.status(500).json({ message: "Internal Server Error" }); // Handle other errors
     }
