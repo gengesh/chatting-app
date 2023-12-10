@@ -9,10 +9,15 @@ app.use(cors({
 }));
 
 const signupRoutes = require('./routes/signup.js');
+const loginRoutes = require('./routes/login.js');
+
+
 app.use(bodyParser.json()); // Parse JSON-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(signupRoutes);
+app.use(loginRoutes);
+
 
 sequelize.sync().then((results) => {
     console.log(results);
