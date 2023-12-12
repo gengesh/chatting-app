@@ -20,10 +20,10 @@ exports.postLogin = async (req,res,next) => {
                 if(passwordMatch){
                     res.status(200).json({message:"login successfully",token:generateAccessToken(user.id,user.name)});
                 }else{
-                     res.status(401).json({message:"password incorrect!"});
+                     res.status(401).json({message:"User not authorized"});
                  }
                 }else{
-                     res.status(404).json({message:"email id not found!"});
+                     res.status(404).json({message:"User not found"});
                     }
                 }catch(err) {
                     console.log(err);
