@@ -9,13 +9,23 @@ exports.postMsg = async (req,res,next)  => {
     const userid = req.user.id;
     const name = req.user.name;
     console.log("name is :",name);
-    const message = await Chats.create({
+    await Chats.create({
         msg:msg,
+        name:name,
         UserId:userid
     })
      await Chats.findAll()
     .then(messages => {
         res.status(200).json({messages:messages,name:name});
+    }).catch(err => {
+        res.status(401).json({err:err});
+    })
+}
+
+exports.getMsg = async (req,res,next) => {
+    await Chats.findAll()
+    .then(messages => {
+        res.status(200).json({messages:messages});
     }).catch(err => {
         res.status(401).json({err:err});
     })
