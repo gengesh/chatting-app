@@ -31,7 +31,7 @@ axios.post('http://localhost:4000/msg',obj,{headers:{"Authorization":token}})
     })
 }
 
-getAllMsgs();
+setInterval(getAllMsgs, 1000);
 
 
 function getAllMsgs(){
