@@ -1,9 +1,11 @@
+const { Op } = require('sequelize');
 
 const Chats = require('../models/chats.js');
 const sequelize = require('../util/database.js');
 
 
 exports.postMsg = async (req,res,next)  => {
+    const lastmsgid = req.params.lastmsgid;
     const msg = req.body.msg;
     console.log("message is :",msg);
     const userid = req.user.id;
@@ -14,7 +16,13 @@ exports.postMsg = async (req,res,next)  => {
         name:name,
         UserId:userid
     })
-     await Chats.findAll()
+    await Chats.findAll({
+        where: {
+            id: {
+                [Op.gt]: lastmsgid
+            }
+        }
+    })
     .then(messages => {
         res.status(200).json({messages:messages,name:name});
     }).catch(err => {
@@ -23,7 +31,15 @@ exports.postMsg = async (req,res,next)  => {
 }
 
 exports.getMsg = async (req,res,next) => {
-    await Chats.findAll()
+    const lastmsgid = req.params.lastmsgid;
+    console.log("last msg id",lastmsgid);
+    await Chats.findAll({
+        where: {
+            id: {
+                [Op.gt]: lastmsgid
+            }
+        }
+    })
     .then(messages => {
         res.status(200).json({messages:messages});
     }).catch(err => {
