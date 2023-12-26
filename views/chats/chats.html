@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>chats</title>
 </head>
 <body>
     <header>
@@ -16,25 +16,66 @@
         </div>
     </header>
     <div class="totalcontent">
+    <div class="groups">
+       <button id="newgroup" class="newGroup">New Group</button>
+       <div id = "groupList">
+        
+       </div>
+    </div>
         <div class="content">
-            <!-- Your webpage content goes here -->
-            <h1>Hello, Centered World!</h1>
-            <h1>Hello, Centered World!</h1>
+            <p>messages here</p>
         </div>
     </div>
     <div class="send-box">
-        <input id="msgs"class = "input-box"type="text">
+        <input type="text" id="msg"class ="input-box">
         <button id="sendid">send</button>
     </div>
+
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+      <span class="close" id="closePopup">&times;</span>
+     
+    <div id="creategroupForm">
+      <h2 style="margin-bottom:1rem;text-align: center;">create group</h2>
+     <form id ="formField"class="inline"method="post">
+      <div class="input-icons">
+      <div>
+        <label for="grpname">Group Name:</label>
+        <input type="text" class="input-field" id="grpname" placeholder="Name here"required>
+      </div>
+      <div class="custom-dropdown">
+        <div class="dropdown-button" onclick="toggleDropdown()">Select Members</div>
+        <div class="dropdown-content" id="dropdownContent">
+          <!-- <label><input type="checkbox" value="john">John</label>
+           -->
+         
+          <!-- Add more members as needed -->
+        </div>
+      </div>
+    
+      <div class="form-group"style="margin-top: 1rem;">
+        <button type="submit"id="creategroupButton" class="form-control">create group</button>
+        <span id="status" style="color:red"></span>
+  </div>
+</form>
+</div>
+  </div>
+</div>
+
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="chats.js"></script>
+<script src="newgroup.js"></script>
 <style>
+    body{
+        background-color:rgb(129, 199, 240);
+    }
     .totalcontent {
         margin: 0;
         padding: 0;
         display: flex;
-        background-color:aqua;
+        background-color:rgb(129, 199, 240);
         /* align-items: center; */
         /* justify-content: center; */
         height: 75vh;
@@ -52,6 +93,8 @@
     justify-content: space-between;
     align-items: center;
     min-height: 75px;
+    border-radius: 10px;
+    margin:1rem;
 }
 .right-content {
    display:flex;
@@ -60,17 +103,143 @@
 }
 
     .content {
-        /* width: 100%; */
-        /* height:80%; */
-        align-items: center;
-        /* max-width: 1200px; Optional: Set a max-width for the content */
-        /* background-color: aqua; */
+        width: 70%;
+        margin:1rem;
+        /* display: flex; */
+      justify-content: center;
+        background-color: aliceblue;
+        border-radius: 1rem;
+        overflow:auto;
+    }
+    .groups {
+        width:30%;
+        /* border: solid 2px rgb(115, 170, 221); */
+        margin:1rem;
+        margin-right: 0;
+        background-color: rgba(245, 4, 185, 0.178);
+        border-radius: 1rem;
+        overflow: auto;
     }
     .input-box{
-        width:90%;
+        width:83%;
+        height: 25px;
+        border-radius: 10px;
     }
     .send-box {
-        padding-top:1rem;
+        margin:0.5rem;
+        /* background-color:aqua ! important; */
+    }
+    #sendid {
+        background-color: greenyellow;
+        border:solid 2px green;
+        border-radius: 10px;
+        width:10%;
+        height:30px;
+        margin-left:2%;
+    }
+    .newGroup{
+        margin-top: 1rem;
+        margin-left:5%;
+        width: 90%;
+        height:50px;
+        border-radius:10px;
+        /* border:none; */
+        /* align-items: center; */
+    }
+    .popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.5rem 2rem;
+  background-color: whitesmoke;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 1rem;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* .signup-link {
+  cursor: pointer;
+  color: #508bfc;
+} */
+
+.inline{
+            max-width:400px;
+            margin:auto;
+        }
+        .input-icons i {
+            position: absolute;
+        }
+          
+        .input-icons {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+          
+        .icon {
+            /* padding: 17px; */
+            padding:17px 17px 17px 10px;
+            min-width: 40px;
+        }
+          
+         .input-field {
+          /* width: calc(100% - 40px); */
+            width: 100%;
+            height: 35px;
+            /* padding: 10px; */
+            text-align: center;
+            margin-bottom: 1rem;
+            /* padding-left:40px; */
+            /* border-color: aliceblue; */
+        }   
+        .input-field::placeholder{
+          font-size:0.8rem;
+        }
+        #memberSelect{
+          width:100%;
+        }
+      /* Style for the custom dropdown */
+    .custom-dropdown {
+      position: relative;
+      display: inline-block;
+      width:100%;
+    }
+
+    /* Style for the dropdown button */
+    .dropdown-button {
+      padding: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      /* width:100%; */
+    }
+
+    /* Style for the dropdown content */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      width: 100%;
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+      z-index: 1;
+       max-height: 150px; /* Set the maximum height for the dropdown content */
+      overflow-y: auto; 
+    }
+
+    /* Style for the options inside the dropdown content */
+    .dropdown-content label {
+      display: block;
+      padding: 10px;
+      cursor: pointer;
     }
 </style>
 

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const User = require('./models/users.js');
 const Chat = require('./models/chats.js');
+const Group = require('./models/group.js');
 const app = express();
 app.use(cors({
     origin:"*",
@@ -23,6 +24,11 @@ app.use(chatsRoutes);
 User.hasMany(Chat);
 Chat.belongsTo(User);
 
+User.belongsToMany(Group,{through:'UserGroup'});
+Group.belongsToMany(User,{through:'UserGroup'});
+
+Group.hasMany(Chat);
+Chat.belongsTo(Group);
 
 sequelize.sync().then((results) => {
     console.log(results);
