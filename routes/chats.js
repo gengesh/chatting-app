@@ -11,5 +11,8 @@ router.get('/allusers',userAuthentication.authenticate,msgController.getUsers);
 router.post('/group/add-group',userAuthentication.authenticate,groupController.createGroup);
 router.get('/group/get-groups',userAuthentication.authenticate, groupController.getGroups);
 // router.get('/group/get-chat', userAuthentication.authenticate, groupController.getChat);
+router.get('/group/isAdmin', userAuthentication.authenticate, groupController.checkAdmin);
+router.put('/group/update-admin',userAuthentication.authenticate, groupController.makeAdmin);
+
 
 module.exports = router;

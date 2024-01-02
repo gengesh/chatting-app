@@ -22,8 +22,48 @@
         
        </div>
     </div>
-        <div class="content">
-            <p>messages here</p>
+        <div class="content1">
+            <div class="contentHead">
+              <span id="grpname" data-group-id="yourGroupIdHere">grpname</span>
+              <span id="makeAdmin">makeAdmin</span>
+              <span id="edit">members</span>
+
+              <div id="updateMem" class="updateMem">
+                <span class="close2"id="closeMem">&times;</span>
+                <h4>Add or Remove Members</h4>
+              <div class="custom-dropdown2">
+                <div class="dropdown-button2" onclick="toggleDropdown2()">Select Members</div>
+                <div class="dropdown-content2" id="dropdownContent2">
+              </div>
+              </div>
+              <div class="form-group"style="margin-top: 1rem;">
+                <button type="submit"id="updategroupMem" class="form-control">update Members</button>
+                <span id="status1" style="color:red"></span>
+          </div>
+            </div>
+
+
+
+
+
+
+              <div id="admin" class="admin">
+                <span class="close1"id="closeAdmin">&times;</span>
+                <h4>make admin</h4>
+              <div class="custom-dropdown1">
+                <div class="dropdown-button1" onclick="toggleDropdown1()">Select Members</div>
+                <div class="dropdown-content1" id="dropdownContent1">
+              </div>
+              </div>
+              <div class="form-group"style="margin-top: 1rem;">
+                <button type="submit"id="updategroupButton" class="form-control">make admin</button>
+                <span id="status1" style="color:red"></span>
+          </div>
+            </div>
+            </div>
+            <div class="content">
+
+            </div>
         </div>
     </div>
     <div class="send-box">
@@ -47,10 +87,6 @@
       <div class="custom-dropdown">
         <div class="dropdown-button" onclick="toggleDropdown()">Select Members</div>
         <div class="dropdown-content" id="dropdownContent">
-          <!-- <label><input type="checkbox" value="john">John</label>
-           -->
-         
-          <!-- Add more members as needed -->
         </div>
       </div>
     
@@ -102,7 +138,7 @@
    margin-right: 1rem;
 }
 
-    .content {
+    .content1 {
         width: 70%;
         margin:1rem;
         /* display: flex; */
@@ -241,6 +277,104 @@
       padding: 10px;
       cursor: pointer;
     }
+
+    .custom-dropdown1 {
+      position: relative;
+      display: inline-block;
+      width:100%;
+    }
+
+    /* Style for the dropdown button */
+    .dropdown-button1 {
+      padding: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      /* width:100%; */
+    }
+
+    /* Style for the dropdown content */
+    .dropdown-content1 {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      width: 100%;
+      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+      z-index: 1;
+       max-height: 150px; /* Set the maximum height for the dropdown content */
+      overflow-y: auto; 
+    }
+
+    /* Style for the options inside the dropdown content */
+    .dropdown-content1 label {
+      display: block;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .contentHead{
+      background-color: rgb(238, 232, 232);
+      height:50px;
+      position:relative;
+    }
+    #edit{
+      position:absolute;
+      bottom: 0;
+      right: 0;
+      margin: 10px;
+    }
+    #makeAdmin {
+      position:absolute;
+      bottom:0;
+      margin:10px;
+      right:85px;
+    }
+    #edit, #makeAdmin {
+      display:none;
+    }
+    .admin {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  z-index: 1;
+}
+
+.updateMem {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  z-index: 1;
+}
+
+
+#adminDropdown {
+  margin-right: 10px;
+}
+.admin input[type="checkbox"] {
+  margin-right: 5px;
+}
+#grpname {
+  position:absolute;
+      bottom:0;
+      margin:10px;
+      right:55%;
+}
+.close1 {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 </style>
 
 </html>

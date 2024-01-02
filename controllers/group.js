@@ -1,7 +1,7 @@
 
 const { Op } = require('sequelize');
 
-const Chats = require('../models/chats.js');
+const Chat = require('../models/chats.js');
 const User = require('../models/users.js');
 const Group = require('../models/group.js');
 const UserGroup = require('../models/userGroup.js');
@@ -53,3 +53,71 @@ exports.getGroups = async (req,res,next) => {
         res.status(500).json({error: err, success: false})
     }
 }
+
+exports.checkAdmin = async(req,res,next) => {
+    try {
+        const groupId = req.query.groupId;
+        // const  user = await User.findByPk(req.user.id);
+
+          const result = await UserGroup.findOne(
+            {  where:  {
+                userId:  req.user.id,
+                groupId: groupId
+            }
+        })
+        const admins = await UserGroup.findAll({
+            where: {
+              groupId: groupId,
+            }
+          });
+
+          const adminsWithUserData = await Promise.all(
+            admins.map(async (admin) => {
+              const userData = await User.findByPk(admin.UserId);
+              return {
+                admin,
+                userData,
+              };
+            })
+          );
+          const users = await User.findAll();
+        res.status(200).json({
+            isAdmin: result,
+            groupMembers:adminsWithUserData,
+            users:users
+        });
+    }catch(err) {
+        res.status(500).json({error: err, success: false})
+    }
+}
+
+exports.makeAdmin = async (req, res, next) => {
+    try {
+        // Set isAdmin to false for all members in the group
+        await UserGroup.update(
+            { isAdmin: false },
+            {
+                where: {
+                    groupId: req.body.groupId
+                }
+            }
+        );
+
+        // Set isAdmin to true for the specified user
+        const result = await UserGroup.update(
+            { isAdmin: true },
+            {
+                where: {
+                    id: req.body.members,
+                    groupId: req.body.groupId
+                }
+            }
+        );
+
+        res.status(200).json({
+            isAdmin: result
+        });
+    } catch (err) {
+        res.status(500).json({ error: err, success: false });
+    }
+};

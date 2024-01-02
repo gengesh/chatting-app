@@ -1,8 +1,30 @@
-// const chatboxLoad = require('./chats.js')
+
 const newgroup = document.getElementById('newgroup');
 const popup = document.getElementById("popup");
 const closePopup = document.getElementById("closePopup");
+const closeAdmin = document.getElementById('closeAdmin');
+const editMembers = document.getElementById('edit');
+const closeMem = document.getElementById('closeMem');
+
+closeAdmin.addEventListener('click', function () {
+  const admin = document.getElementById('admin');
+  admin.style.display = 'none';
+})
+
+closeMem.addEventListener('click', function () {
+  const updateMem = document.getElementById('updateMem');
+  updateMem.style.display = 'none';
+})
 // showGroupList();
+
+editMembers.addEventListener('click',addOrRemoveMember);
+
+function addOrRemoveMember(e){
+  e.preventDefault();
+  updateMem.style.display = 'block';
+
+}
+
 const intervalId1 = setInterval(()=>{
   let recentGroupId = localStorage.getItem('recentGroupId');
   if(!recentGroupId){
@@ -55,11 +77,77 @@ function toggleDropdown() {
   var dropdownContent = document.getElementById('dropdownContent');
   dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
 }
+function toggleDropdown1() {
+  var dropdownContent = document.getElementById('dropdownContent1');
+  dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+}
+function toggleDropdown2() {
+  var dropdownContent = document.getElementById('dropdownContent2');
+  dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+}
 
 createDropdownOptions();
 
 const creategroupButton = document.getElementById('creategroupButton');
+const updategroupButton = document.getElementById('updategroupButton');
+const updategroupMem = document.getElementById('updategroupMem');
 
+updategroupMem.addEventListener("click",function(e) {
+  e.preventDefault();
+  const selectedMembers = [];
+  const checkboxes = document.querySelectorAll('#dropdownContent2 input[type="checkbox"]:checked');
+  checkboxes.forEach(function(checkbox) {
+    selectedMembers.push(checkbox.id);
+  });
+ 
+ console.log('members:',selectedMembers);
+ const groupId = document.getElementById('grpname').dataset.groupId;
+ console.log("groupId:",groupId);
+ const token = localStorage.getItem('token');
+ console.log("selected members:",selectedMembers);
+ const group = {
+  groupId,
+   members:selectedMembers
+ };
+ axios.put(`http://localhost:4000/group/update-members`,group,{headers:{"Authorization":token}})
+ .then(res => {
+
+     const updateMem = document.getElementById('updateMem');
+     updateMem.style.display = 'none';
+ })
+ .catch((error) => {
+  console.error("Error updating admin status:", error);
+});
+ })
+
+updategroupButton.addEventListener("click",function(e) {
+  e.preventDefault();
+  const selectedMembers = [];
+  const checkboxes = document.querySelectorAll('#dropdownContent1 input[type="checkbox"]:checked');
+  checkboxes.forEach(function(checkbox) {
+    selectedMembers.push(checkbox.id);
+  });
+ 
+ console.log('members:',selectedMembers);
+ const groupId = document.getElementById('grpname').dataset.groupId;
+ console.log("groupId:",groupId);
+ const token = localStorage.getItem('token');
+ console.log("selected members:",selectedMembers);
+ const group = {
+  groupId,
+   members:selectedMembers
+ };
+ axios.put(`http://localhost:4000/group/update-admin`,group,{headers:{"Authorization":token}})
+ .then(res => {
+
+     const admin = document.getElementById('admin');
+     admin.style.display = 'none';
+ })
+ .catch((error) => {
+  console.error("Error updating admin status:", error);
+});
+ })
+ 
 creategroupButton.addEventListener("click",function(e) {
  e.preventDefault();
  const selectedMembers = [];
@@ -123,10 +211,63 @@ async function showGroupList(recentGroupId){
 async function groupBtnClicked(groupId){
   localStorage.setItem('groupId',groupId);
   const content = document.getElementsByClassName('content');
+  const spanElement = document.getElementById('grpname');
+  spanElement.setAttribute('data-group-id', groupId);
   while (content[0].firstChild) {
            content[0].removeChild(content[0].firstChild);
        }
   await chatboxLoad();
-  // const response = await axios.get(`http://localhost:4000/group/get-chat?groupId=${groupId}`, { headers: {"Authorization": token}})
-  // const allChats = response.data.allChats;
+  const token = localStorage.getItem('token');
+  const adminResponse = await axios.get(`http://localhost:4000/group/isAdmin?groupId=${groupId}`, { headers: {"Authorization": token}})
+  const edit =  document.getElementById('edit');
+  const makeAdmin = document.getElementById('makeAdmin');
+  const admin = document.getElementById('admin');
+  const groupMembers = adminResponse.data.groupMembers;
+  console.log("groupMembers:",groupMembers);
+  console.log("users:",adminResponse.data.users);
+  const dropdownContent1 = document.getElementById('dropdownContent1');
+  dropdownContent1.innerHTML = '';
+  const dropdownContent2 = document.getElementById('dropdownContent1');
+  dropdownContent2.innerHTML = '';
+  console.log("this is check admin:",adminResponse.data);
+       const users = adminResponse.data.users;
+
+  users.forEach(function(member) {
+    var label = document.createElement('label');
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = member.name;
+    checkbox.id = member.id;
+    checkbox.checked = false;
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode( member.name));
+    dropdownContent2.appendChild(label);
+  });
+
+
+  groupMembers.forEach(function(member) {
+    var label = document.createElement('label');
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = member.userData.name;
+    checkbox.id = member.admin.id;
+    checkbox.checked = member.admin.isAdmin;
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode( member.userData.name));
+    dropdownContent1.appendChild(label);
+  });
+  if(adminResponse.data.isAdmin.isAdmin) {
+  console.log("this is check admin process");
+  edit.style.display = 'block';
+  makeAdmin.style.display = 'block';
+  makeAdmin.addEventListener('click', (event) => {
+    event.preventDefault();
+    console.log("this is admin");
+    admin.style.display = 'block';
+  });
+  }  else {
+    edit.style.display = 'none';
+    makeAdmin.style.display = 'none';
+  }
+  
 }
