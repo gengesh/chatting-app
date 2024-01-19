@@ -31,6 +31,6 @@ Group.hasMany(Chat);
 Chat.belongsTo(Group);
 
 sequelize.sync().then((results) => {
-    console.log(results);
+    // console.log(results);
     app.listen(4000);
 }).catch(err => console.log(err))

@@ -13,6 +13,7 @@ router.get('/group/get-groups',userAuthentication.authenticate, groupController.
 // router.get('/group/get-chat', userAuthentication.authenticate, groupController.getChat);
 router.get('/group/isAdmin', userAuthentication.authenticate, groupController.checkAdmin);
 router.put('/group/update-admin',userAuthentication.authenticate, groupController.makeAdmin);
-
+router.post('/group/update-members',userAuthentication.authenticate,groupController.updateMembers);
+// router.get('/group/groupMembers',userAuthentication.authenticate,groupController.groupMembers);
 
 module.exports = router;

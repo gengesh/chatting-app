@@ -121,3 +121,46 @@ exports.makeAdmin = async (req, res, next) => {
         res.status(500).json({ error: err, success: false });
     }
 };
+
+exports.updateMembers = async (req, res, next) => {
+    try {
+        const memberIds = req.body.members;
+        const groupId = req.body.groupId;
+
+        console.log("groupId is updated:", groupId);
+        console.log("group members are:", memberIds);
+
+        // Identify existing records for the given groupId
+        const existingUserIds = await UserGroup.findAll({
+            where: {
+                GroupId: groupId
+            }
+        });
+        console.log("existingUserIds:",existingUserIds);
+        const existingUserIdsSet = new Set(existingUserIds.map(record => record.UserId));
+        console.log("existingUserIdsSet:",existingUserIdsSet);
+        // Filter out user IDs that already exist
+        const newMemberIds = memberIds.filter(userId => !existingUserIdsSet.has(Number(userId)));
+        console.log("newMemberIds is:", newMemberIds);
+
+        // Delete records where UserId is not in memberIds and groupId matches
+        const deleteResult = await UserGroup.destroy({
+            where: {
+                UserId: {
+                    [Op.notIn]: memberIds
+                },
+                GroupId: groupId
+            }
+        });
+
+        // Insert new records for memberIds that don't have existing records for the given groupId
+        const insertResult = await UserGroup.bulkCreate(
+            newMemberIds.map(userId => ({ UserId: userId, GroupId: groupId }))
+        );
+            console.log("insertResult:",insertResult);
+        res.status(200).json({ deleteResult, insertResult });
+    } catch (error) {
+        console.error('Error in updateMembers:', error);
+        res.status(500).json({ error: error.message });
+    }
+};

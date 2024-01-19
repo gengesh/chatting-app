@@ -101,17 +101,19 @@ updategroupMem.addEventListener("click",function(e) {
   });
  
  console.log('members:',selectedMembers);
- const groupId = document.getElementById('grpname').dataset.groupId;
+ const groupId = document.getElementById('grpname1').dataset.groupId;
  console.log("groupId:",groupId);
  const token = localStorage.getItem('token');
  console.log("selected members:",selectedMembers);
  const group = {
-  groupId,
+  groupId:groupId,
    members:selectedMembers
  };
- axios.put(`http://localhost:4000/group/update-members`,group,{headers:{"Authorization":token}})
+ axios.post(`http://localhost:4000/group/update-members`,group,{headers:{"Authorization":token}})
  .then(res => {
-
+      console.log("response is :",res);
+      console.log("insertResult:",res.data.insertResult);
+      console.log("deleteResult:",res.data.deleteResult);
      const updateMem = document.getElementById('updateMem');
      updateMem.style.display = 'none';
  })
@@ -129,7 +131,7 @@ updategroupButton.addEventListener("click",function(e) {
   });
  
  console.log('members:',selectedMembers);
- const groupId = document.getElementById('grpname').dataset.groupId;
+ const groupId = document.getElementById('grpname1').dataset.groupId;
  console.log("groupId:",groupId);
  const token = localStorage.getItem('token');
  console.log("selected members:",selectedMembers);
@@ -211,7 +213,7 @@ async function showGroupList(recentGroupId){
 async function groupBtnClicked(groupId){
   localStorage.setItem('groupId',groupId);
   const content = document.getElementsByClassName('content');
-  const spanElement = document.getElementById('grpname');
+  const spanElement = document.getElementById('grpname1');
   spanElement.setAttribute('data-group-id', groupId);
   while (content[0].firstChild) {
            content[0].removeChild(content[0].firstChild);
@@ -227,18 +229,30 @@ async function groupBtnClicked(groupId){
   console.log("users:",adminResponse.data.users);
   const dropdownContent1 = document.getElementById('dropdownContent1');
   dropdownContent1.innerHTML = '';
-  const dropdownContent2 = document.getElementById('dropdownContent1');
+  const dropdownContent2 = document.getElementById('dropdownContent2');
   dropdownContent2.innerHTML = '';
   console.log("this is check admin:",adminResponse.data);
        const users = adminResponse.data.users;
 
   users.forEach(function(member) {
-    var label = document.createElement('label');
-    var checkbox = document.createElement('input');
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = member.name;
     checkbox.id = member.id;
-    checkbox.checked = false;
+    // if (groupMembers.includes(member.id)) {
+    //   checkbox.checked = true;
+    // } else {
+    //   checkbox.checked = false;
+    // }
+    let grpMem = groupMembers.some(memberObj => memberObj.admin.UserId === member.id);
+
+if (grpMem) {
+  checkbox.checked = true;
+} else {
+  checkbox.checked = false;
+}
+
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode( member.name));
     dropdownContent2.appendChild(label);
@@ -246,8 +260,8 @@ async function groupBtnClicked(groupId){
 
 
   groupMembers.forEach(function(member) {
-    var label = document.createElement('label');
-    var checkbox = document.createElement('input');
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = member.userData.name;
     checkbox.id = member.admin.id;
