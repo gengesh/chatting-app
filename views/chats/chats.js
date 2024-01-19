@@ -144,7 +144,7 @@ function loadpremsg(e){
         
          console.log('this is load');
    
-    // const content = document.getElementsByClassName('content');
+    const content = document.getElementsByClassName('content');
     console.log("all msgs is :",allmsgs);
     //  while (content[0].firstChild) {
     //        content[0].removeChild(content[0].firstChild);
@@ -173,7 +173,7 @@ function loadpremsg(e){
      content[0].insertBefore(button,firstChild)
     } 
 }else {
-       
+        const content = document.getElementsByClassName('content');
         button.innerHTML = "Load Previous Msg";
         // intervalId = setInterval(getNewMsgs, 1000);
         for(let i=allmsgs.length-11;i>=0;i--) {
