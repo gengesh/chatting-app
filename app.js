@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); 
 const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const User = require('./models/users.js');
@@ -29,6 +30,17 @@ Group.belongsToMany(User,{through:'UserGroup'});
 
 Group.hasMany(Chat);
 Chat.belongsTo(Group);
+// app.use((req,res) => {
+//         console.log("urlllll;:",req.url)
+//         res.sendFile(path.join(__dirname,`../views/${req.url}`));
+//     })
+
+app.use(express.static(path.join(__dirname, 'views')));
+
+// Add a catch-all route to handle other requests
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
 
 sequelize.sync().then((results) => {
     // console.log(results);
