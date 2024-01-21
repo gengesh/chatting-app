@@ -81,10 +81,12 @@ exports.checkAdmin = async(req,res,next) => {
             })
           );
           const users = await User.findAll();
+          const groupName = await Group.findByPk(groupId);
         res.status(200).json({
             isAdmin: result,
             groupMembers:adminsWithUserData,
-            users:users
+            users:users,
+            groupName:groupName
         });
     }catch(err) {
         res.status(500).json({error: err, success: false})

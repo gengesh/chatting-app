@@ -4,6 +4,15 @@ document.addEventListener("DOMContentLoaded", function() {
     showGroupList(recentGroupId);
    chatboxLoad();
 });
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+    // Clear localStorage
+    localStorage.clear();
+
+    // Redirect to the index page
+    window.location.href = '../index/index.html'; 
+});
+
 async function chatboxLoad(){
     const content = document.getElementsByClassName('content');
     const loadPreviousMsgButton = document.createElement('button');

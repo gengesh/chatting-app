@@ -225,6 +225,7 @@ async function groupBtnClicked(groupId){
   const makeAdmin = document.getElementById('makeAdmin');
   const admin = document.getElementById('admin');
   const groupMembers = adminResponse.data.groupMembers;
+  spanElement.innerHTML = adminResponse.data.groupName.name;
   console.log("groupMembers:",groupMembers);
   console.log("users:",adminResponse.data.users);
   const dropdownContent1 = document.getElementById('dropdownContent1');
