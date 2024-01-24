@@ -6,7 +6,14 @@ const sequelize = require('./util/database');
 const User = require('./models/users.js');
 const Chat = require('./models/chats.js');
 const Group = require('./models/group.js');
+const { createServer } = require('node:http');
 const app = express();
+const { Server } = require('socket.io');
+
+const server = createServer(app);
+const io = new Server(server);
+
+
 app.use(cors({
     origin:"*",
 }));
@@ -42,7 +49,41 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
+
+
+//   io.on('connection', (socket) => {
+//     console.log('a user connected');
+//     socket.on('disconnect', () => {
+//       console.log('user disconnected');
+//     });
+//   });
+const users = {}
+io.on('connection', (socket) => {
+  socket.on('new-user', name => {
+    users[socket.id] = name
+    console.log("connection is :",name);
+    socket.broadcast.emit('user-connected', name)
+  })
+
+    socket.on('chat message', ({message,name}) => {
+      console.log('message: ' + message);
+      console.log('name:',name);
+      io.emit('chat message', ({message,name}));
+    })
+
+    socket.on('group', ( { grpId, grpName }) => {
+      console.log("group id:",grpId);
+      console.log('group name:',grpName);
+      io.emit('group',({grpId,grpName}))
+    })
+
+    socket.on('disconnect', () => {
+      socket.broadcast.emit('user-disconnected', users[socket.id])
+      delete users[socket.id]
+    })
+  });
+
 sequelize.sync().then((results) => {
     // console.log(results);
-    app.listen(4000);
+    server.listen(4000);
 }).catch(err => console.log(err))

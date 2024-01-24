@@ -24,13 +24,19 @@ function addOrRemoveMember(e){
   updateMem.style.display = 'block';
 
 }
+let recentGroupId = localStorage.getItem('recentGroupId');
+if(!recentGroupId){
+    recentGroupId=0;
+}else{
+  showGroupList(recentGroupId);
+}
 
-const intervalId1 = setInterval(()=>{
-  let recentGroupId = localStorage.getItem('recentGroupId');
-  if(!recentGroupId){
-      recentGroupId=0;
-  }
-  showGroupList(recentGroupId)}, 1000);
+// const intervalId1 = setInterval(()=>{
+//   let recentGroupId = localStorage.getItem('recentGroupId');
+//   if(!recentGroupId){
+//       recentGroupId=0;
+//   }
+//   showGroupList(recentGroupId)}, 1000);
   newgroup.addEventListener("click", function () {
         popup.style.display = "block";
     });
@@ -175,9 +181,29 @@ axios.post(`http://localhost:4000/group/add-group`,group,{headers:{"Authorizatio
     statusSpan.textContent = status;
     var popup = document.getElementById('popup');
    popup.style.display = 'none';
+   const newGroup = res.data.newGroup;
+   console.log("newGroup is :",newGroup);
+   const grpId = newGroup.id;
+   const grpName = newGroup.name;
+   socket.emit('group', { grpId, grpName });
 })
 })
-
+socket.on('group', ({ grpId, grpName }) => {
+  groupBtn = document.createElement('input');
+  groupBtn.type = "button";
+  groupBtn.className = "newGroup";
+  groupBtn.id =  grpId;
+  groupBtn.value = grpName;
+  groupBtn.onclick =  (event) => {
+    event.preventDefault();
+      const groupId = event.target.id;
+      groupBtnClicked(groupId);
+  }
+  const parentElemGroup = document.getElementById('groupList');
+  var br = document.createElement('br');
+  parentElemGroup.appendChild(groupBtn);
+  parentElemGroup.appendChild(br);
+})
 async function showGroupList(recentGroupId){
   try{
     const token = localStorage.getItem('token');
@@ -185,6 +211,12 @@ async function showGroupList(recentGroupId){
   const parentElemGroup = document.getElementById('groupList');
 
   const groupResponse = await axios.get(`http://localhost:4000/group/get-groups?recentGroupId=${recentGroupId}`,{ headers: {"Authorization": token}})
+
+  const name = groupResponse.data.userName;
+  //  console.log("usrname  osofos:",name);
+   socket.emit('new-user',name)
+
+
   if(groupResponse.data.allGroups.length){
 
     console.log("groupssssssss:",groupResponse.data.allGroups)

@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 const authenticate = async (req,res,next) => {
     try {
         const token = req.header('Authorization');
-        console.log(token);
+        // console.log(token);
         const user = jwt.verify(token,'gengeswaran');
-        console.log("userId>>>>:",user.userId);
+        // console.log("userId>>>>:",user.userId);
        const user1 =  await User.findByPk(user.userId)
             req.user = user1;
             next();

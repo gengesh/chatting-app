@@ -8,12 +8,12 @@ const sequelize = require('../util/database.js');
 exports.postMsg = async (req,res,next)  => {
     // const noOfMsg = req.params.noofmsg;
     const msg = req.body.msg;
-    console.log("message is :",msg);
+    // console.log("message is :",msg);
     const userid = req.user.id;
     const name = req.user.name;
-    console.log("name is :",name);
+    // console.log("name is :",name);
     const groupId = req.body.groupId;
-    console.log("groupId:",groupId);
+    // console.log("groupId:",groupId);
     await Chats.create({
         msg:msg,
         name:name,
@@ -29,12 +29,12 @@ exports.postMsg = async (req,res,next)  => {
 
 exports.getMsg = async (req,res,next) => {
     const recentId = req.params.recentId;
-    console.log("last msg id",recentId);
+    // console.log("last msg id",recentId);
     let groupId = req.query.groupId;
     if(!groupId){
         groupId=null;
     }
-    console.log("groupId:getMsg:",groupId);
+    // console.log("groupId:getMsg:",groupId);
     //  const totalCount = await Chats.count();
     await Chats.findAll({
         where: {

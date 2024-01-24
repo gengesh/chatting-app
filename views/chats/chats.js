@@ -2,16 +2,49 @@
 document.addEventListener("DOMContentLoaded", function() {
    const recentGroupId = 0;
     showGroupList(recentGroupId);
-   chatboxLoad();
+//    chatboxLoad();
+   
 });
+// const socket = io();
 
 document.getElementById('logoutButton').addEventListener('click', function() {
-    // Clear localStorage
     localStorage.clear();
-
-    // Redirect to the index page
     window.location.href = '../index/index.html'; 
 });
+
+function OnlineToggleDropdown() {
+    const dropdownContent = document.getElementById('OnlineDropdownContent');
+    dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+}
+
+socket.on('user-connected', name => {
+    appendMessage(name)
+  })
+  
+  socket.on('user-disconnected', name => {
+    appendMessage(name)
+  })
+  
+  
+  function appendMessage(message) {
+  var dropdownContent = document.getElementById('OnlineDropdownContent');
+                  // Check if the item already exists
+                  var existingItem = Array.from(dropdownContent.children).find(function(item) {
+                    return item.textContent.trim() === message;
+                });
+        
+                if (existingItem) {
+                    // If the item exists, remove it
+                    dropdownContent.removeChild(existingItem);
+                }
+        
+                // Add the new item
+                var newItem = document.createElement('a');
+                newItem.href = '#';
+                newItem.textContent = message;
+                dropdownContent.appendChild(newItem);
+            }
+
 
 async function chatboxLoad(){
     const content = document.getElementsByClassName('content');
@@ -39,6 +72,26 @@ async function chatboxLoad(){
     console.error("Error fetching messages:", error);
 });
 }
+
+socket.on('chat message', ({ message, name }) => {
+    console.log('msg is socket:',message);
+    console.log('name is socket:',name);
+    const content = document.getElementsByClassName('content');
+    const premsg = document.getElementById('premsg');
+    premsg.addEventListener('click',loadpremsg);
+      const p = document.createElement('p');
+      const details = `${name}: <br> ${message}`;
+        p.innerHTML = details;
+        p.style.backgroundColor = 'yellow';
+        p.style.padding = '10px';
+        p.style.width = '50%';
+        p.style.border = '1px solid black';
+        p.style.marginLeft = '10px';
+        p.style.borderRadius = '10px';
+        content[0].appendChild(p);
+        window.scrollTo(0, document.body.scrollHeight);
+});
+
 function createMsg(msg){
        const content = document.getElementsByClassName('content');
        const premsg = document.getElementById('premsg');
@@ -57,6 +110,7 @@ function createMsg(msg){
            p.style.marginLeft = '10px';
            p.style.borderRadius = '10px';
            content[0].appendChild(p);
+           window.scrollTo(0, document.body.scrollHeight);
        }
 
     }
@@ -66,7 +120,7 @@ const send = document.getElementById('sendid');
 
 send.addEventListener('click',sendMsg);
 
-var intervalId;
+// var intervalId;
 
 function sendMsg(e){
     e.preventDefault();
@@ -74,6 +128,7 @@ function sendMsg(e){
     const msg = document.getElementById('msg').value;
     if(msg){
     console.log("msg is ",msg);
+    
     let groupId = localStorage.getItem('groupId');
     if(!groupId){
         groupId = null;
@@ -85,61 +140,64 @@ function sendMsg(e){
     document.getElementById('msg').value = '';
  axios.post(`http://localhost:4000/msg`,obj,{headers:{"Authorization":token}})
 .then(res => {
-    const message = res.data.message;
-    console.log(res.data.message);
-    const storedData = localStorage.getItem('allmsgs');
-    const allmsgs = JSON.parse(storedData);
-    if(message){
-    allmsgs.push(message);
-    localStorage.setItem('allmsgs', JSON.stringify(allmsgs));
-    const messages = [];
-    messages.push(message);
-        createMsg(messages);
-    }
+    const message = res.data.message.msg;
+    console.log(res.data.message.msg);
+    const name = res.data.message.name;
+    console.log(res.data.message.name);
+    socket.emit('chat message', { message, name });
+    // const storedData = localStorage.getItem('allmsgs');
+    // const allmsgs = JSON.parse(storedData);
+    // if(message){
+    // allmsgs.push(message);
+    // localStorage.setItem('allmsgs', JSON.stringify(allmsgs));
+    // const messages = [];
+    // messages.push(message);
+        // createMsg(messages);
+    // }
 })
     .catch(error => {
         console.error("Error fetching messages:", error);
     });
 }
-
- intervalId = setInterval(updateMsg, 1000);
+}
+//  intervalId = setInterval(updateMsg, 1000);
 // updateMsg();
 
 
-async function updateMsg(){
-    const token = localStorage.getItem('token');
-    const storedData = localStorage.getItem('allmsgs');
-    const allmsgs = JSON.parse(storedData);
-    console.log("totalmsgs length:",allmsgs.length);
-    let recenId = 0;
-    let groupId = localStorage.getItem('groupId');
-    if(!groupId){
-        groupId = null;
-    }
-    if(allmsgs.length){
-     recenId =  allmsgs[allmsgs.length-1].id
-    }
-    await axios.get(`http://localhost:4000/msg/${recenId}?groupId=${groupId}`,{headers:{"Authorization":token}})
-.then(res => {
-    // console.log(res.data.messages);
-    const messages = res.data.messages;
-    const content = document.getElementsByClassName('content');
+// async function updateMsg(){
+//     const token = localStorage.getItem('token');
+//     const storedData = localStorage.getItem('allmsgs');
+//     const allmsgs = JSON.parse(storedData);
+//     console.log("totalmsgs length:",allmsgs.length);
+//     let recenId = 0;
+//     let groupId = localStorage.getItem('groupId');
+//     if(!groupId){
+//         groupId = null;
+//     }
+//     if(allmsgs.length){
+//      recenId =  allmsgs[allmsgs.length-1].id
+//     }
+//     await axios.get(`http://localhost:4000/msg/${recenId}?groupId=${groupId}`,{headers:{"Authorization":token}})
+// .then(res => {
+//     // console.log(res.data.messages);
+//     const messages = res.data.messages;
+//     const content = document.getElementsByClassName('content');
 
-    for(let i =0;i<messages.length;i++){
-        // const p = document.createElement('p');
-        // const details = `${messages[i].name}: <br> ${messages[i].msg}`;
+//     for(let i =0;i<messages.length;i++){
+//         // const p = document.createElement('p');
+//         // const details = `${messages[i].name}: <br> ${messages[i].msg}`;
          
-          allmsgs.push(messages[i]);
-      }
-      if(messages.length){
-      localStorage.setItem('allmsgs', JSON.stringify(allmsgs));
-      createMsg(messages);
-      }
-    }).catch(err => {
-        console.log("error:",err);
-    })   
-}
-}
+//           allmsgs.push(messages[i]);
+//       }
+//       if(messages.length){
+//       localStorage.setItem('allmsgs', JSON.stringify(allmsgs));
+//       createMsg(messages);
+//       }
+//     }).catch(err => {
+//         console.log("error:",err);
+//     })   
+// }
+// }
 
 function loadpremsg(e){
     e.preventDefault();
@@ -196,5 +254,4 @@ function loadpremsg(e){
     }
    
 }
-
 

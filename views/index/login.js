@@ -51,6 +51,7 @@ function login_details(e){
     e.target.email1.value = "";
     e.target.password1.value = "";
      localStorage.setItem('token', response.data.token);
+    
      window.location.href = '../chats/chats.html';
    } 
  })
@@ -76,6 +77,5 @@ function login_details(e){
     console.log('Request failed with status: ' + err.response.status);
   }
  });
-
-
 }
+

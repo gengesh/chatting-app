@@ -46,7 +46,8 @@ exports.getGroups = async (req,res,next) => {
             },
           });
         res.status(200).json({
-            allGroups: groups
+            allGroups: groups,
+            userName:user.name
         });
        
     }catch(err) {
@@ -129,8 +130,8 @@ exports.updateMembers = async (req, res, next) => {
         const memberIds = req.body.members;
         const groupId = req.body.groupId;
 
-        console.log("groupId is updated:", groupId);
-        console.log("group members are:", memberIds);
+        // console.log("groupId is updated:", groupId);
+        // console.log("group members are:", memberIds);
 
         // Identify existing records for the given groupId
         const existingUserIds = await UserGroup.findAll({
@@ -138,12 +139,12 @@ exports.updateMembers = async (req, res, next) => {
                 GroupId: groupId
             }
         });
-        console.log("existingUserIds:",existingUserIds);
+        // console.log("existingUserIds:",existingUserIds);
         const existingUserIdsSet = new Set(existingUserIds.map(record => record.UserId));
-        console.log("existingUserIdsSet:",existingUserIdsSet);
+        // console.log("existingUserIdsSet:",existingUserIdsSet);
         // Filter out user IDs that already exist
         const newMemberIds = memberIds.filter(userId => !existingUserIdsSet.has(Number(userId)));
-        console.log("newMemberIds is:", newMemberIds);
+        // console.log("newMemberIds is:", newMemberIds);
 
         // Delete records where UserId is not in memberIds and groupId matches
         const deleteResult = await UserGroup.destroy({
@@ -159,7 +160,7 @@ exports.updateMembers = async (req, res, next) => {
         const insertResult = await UserGroup.bulkCreate(
             newMemberIds.map(userId => ({ UserId: userId, GroupId: groupId }))
         );
-            console.log("insertResult:",insertResult);
+            // console.log("insertResult:",insertResult);
         res.status(200).json({ deleteResult, insertResult });
     } catch (error) {
         console.error('Error in updateMembers:', error);

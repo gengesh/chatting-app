@@ -8,7 +8,7 @@ exports.postSignUp = async (req,res,next) =>{
     const email = req.body.email;
     const phone = req.body.phone;
     const password = req.body.password;
-   console.log(`name:${name},email:${email},phone:${phone},password:${password}`);
+//    console.log(`name:${name},email:${email},phone:${phone},password:${password}`);
    bcrypt.genSalt(10, (err,salt) => {
     bcrypt.hash(password,salt,async(err,hash) =>{
         if(err){

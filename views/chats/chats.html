@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chats</title>
 </head>
+
 <body>
     <header>
         <div class="title-head">
             <h2>Connect & Chat</h2>
             <div class="right-content">
+              <div class="online-dropdown" id="OnlineMyDropdown">
+                <button onclick="OnlineToggleDropdown()">Show Online Users</button>
+                <div class="online-dropdown-content" id="OnlineDropdownContent">
+                    <!-- Items will be added here dynamically using JavaScript -->
+                </div>
+            </div>
               <button id="logoutButton">Logout</button>
-                <!-- <p><span><a  class="link-iu signin-link"id="signinLink" href="#">Login</a></span></p>
-                <p><span><a  class="link-iu signup-link" id="signupLink" href="#">Signup</a></span></p> -->
               </div>
         </div>
     </header>
@@ -99,7 +104,10 @@
 </div>
   </div>
 </div>
-
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+</script>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="chats.js"></script>
@@ -381,6 +389,32 @@
   font-size: 20px;
   cursor: pointer;
 }
+
+.online-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .online-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            z-index: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .online-dropdown-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        .online-dropdown:hover .online-dropdown-content {
+            display: block;
+        }
 
 </style>
 
