@@ -73,8 +73,19 @@
         </div>
     </div>
     <div class="send-box">
-        <input type="text" id="msg"class ="input-box">
-        <button id="sendid">send</button>
+      <form id="message_form">
+        <div class="input-group align-items-center">
+            <div class="form-check form-switch me-2 ">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitch">
+                <label class="form-check-label" for="flexSwitchCheckDefault">text</label>
+              </div>
+            <input type="text" class="form-control rounded-start-2" placeholder="Type your message..." name="Message"
+               id="flexInput" required>
+            <input type="submit" class="btn btn-primary"  value=&#10148; id="0">
+        </div>
+    </form>
+        <!-- <input type="text" id="msg"class ="input-box">
+        <button id="sendid">send</button> -->
     </div>
 
 
@@ -175,10 +186,10 @@
         /* background-color:aqua ! important; */
     }
     #sendid {
-        background-color: greenyellow;
+        /* background-color: greenyellow; */
         border:solid 2px green;
         border-radius: 10px;
-        width:10%;
+        width:5%;
         height:30px;
         margin-left:2%;
     }

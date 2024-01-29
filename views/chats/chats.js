@@ -7,6 +7,28 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 // const socket = io();
 
+const formElements = {
+    messageInput: message_form.querySelector('input[name="Message"]'),
+    message_btn: message_form.querySelector('input[type="submit"]'),
+    flexSwitch:message_form.querySelector('#flexSwitch'),
+    flexLabel:message_form.querySelector('label'),
+    flexInput:message_form.querySelector('#flexInput')
+}
+
+// const flexSwitch = message_form.querySelector('#flexSwitch');
+
+formElements.flexSwitch.addEventListener('change',()=>{
+    if(formElements.flexLabel.innerText === "text"){
+        formElements.flexLabel.innerText = "image";
+        formElements.flexInput.setAttribute('accept','image/*');
+        formElements.flexInput.type="file"
+    }else{
+        formElements.flexLabel.innerText = "text"
+        formElements.flexInput.removeAttribute('accept');
+        formElements.flexInput.type="text"
+    }
+})
+
 document.getElementById('logoutButton').addEventListener('click', function() {
     localStorage.clear();
     window.location.href = '../index/index.html'; 
@@ -118,27 +140,30 @@ function createMsg(msg){
 
 const send = document.getElementById('sendid');
 
-send.addEventListener('click',sendMsg);
+// send.addEventListener('click',sendMsg);
+formElements.message_btn.addEventListener('click', sendMsg);
 
 // var intervalId;
 
 function sendMsg(e){
+
+    if (e.target && message_form.checkValidity()) {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const msg = document.getElementById('msg').value;
-    if(msg){
-    console.log("msg is ",msg);
-    
     let groupId = localStorage.getItem('groupId');
+
+    if(formElements.flexLabel.innerText === "text"){
+    // const msg = document.getElementById('msg').value;
+   
     if(!groupId){
         groupId = null;
     }
-    const obj = {
-        msg,
-        groupId
+    const data = {
+        msg : formElements.messageInput.value,
+        groupId:groupId
     }
-    document.getElementById('msg').value = '';
- axios.post(`http://localhost:4000/msg`,obj,{headers:{"Authorization":token}})
+    // document.getElementById('msg').value = '';
+ axios.post(`http://localhost:4000/msg`,data,{headers:{"Authorization":token}})
 .then(res => {
     const message = res.data.message.msg;
     console.log(res.data.message.msg);
@@ -158,6 +183,17 @@ function sendMsg(e){
     .catch(error => {
         console.error("Error fetching messages:", error);
     });
+} 
+    else{
+        const file = formElements.messageInput.files[0]
+        if (file && file.type.startsWith('image/')){
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('GroupId',groupId)
+            const imageResponse = axios.post(`http://localhost:4000/image`,formData,{headers:{"Authorization":token}});
+            alert('Please select a valid image file.');
+        }              
+    }
 }
 }
 //  intervalId = setInterval(updateMsg, 1000);
