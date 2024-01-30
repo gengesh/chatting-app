@@ -6,6 +6,9 @@ const sequelize = require('./util/database');
 const User = require('./models/users.js');
 const Chat = require('./models/chats.js');
 const Group = require('./models/group.js');
+const cronService = require('./services/cron');
+cronService.job.start();
+
 const { createServer } = require('node:http');
 const app = express();
 const { Server } = require('socket.io');
