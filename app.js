@@ -70,7 +70,11 @@ io.on('connection', (socket) => {
       console.log('name:',name);
       io.emit('chat message', ({message,name}));
     })
-
+    socket.on('image message',({image,name}) => {
+      console.log('message: ' + image);
+      console.log('name:',name);
+      io.emit('image message', ({image,name}));
+    })
     socket.on('group', ( { grpId, grpName }) => {
       console.log("group id:",grpId);
       console.log('group name:',grpName);

@@ -114,6 +114,44 @@ socket.on('chat message', ({ message, name }) => {
         window.scrollTo(0, document.body.scrollHeight);
 });
 
+socket.on('image message',({image,name}) => {
+    console.log('msg is socket:',image);
+    console.log('name is socket:',name);
+    const content = document.getElementsByClassName('content');
+    const premsg = document.getElementById('premsg');
+    premsg.addEventListener('click',loadpremsg);
+    const a = document.createElement('a');
+const img = document.createElement('img');
+
+ img.style.width = '100px'; // Set to your preferred width
+ img.style.height = 'auto'; // Maintain aspect ratio
+// Set the image source using the provided imageURL
+const imageURL = image; // Replace 'your-image-url.jpg' with the actual URL
+img.src = imageURL;
+img.alt = 'Image Alt Text'; // Provide alt text for accessibility
+
+// Set the link href to the image URL
+a.href = imageURL;
+
+a.appendChild(img);
+
+// Add styling to the <a> tag
+a.style.display = 'block'; // To make it a block element
+a.style.backgroundColor = 'yellow';
+a.style.padding = '10px';
+a.style.width = '50%';
+a.style.border = '1px solid black';
+a.style.marginLeft = '10px';
+a.style.borderRadius = '10px';
+
+// Append the <a> tag to the content container
+content[0].appendChild(a);
+
+// Scroll to the bottom of the page
+window.scrollTo(0, document.body.scrollHeight);
+
+})
+
 function createMsg(msg){
        const content = document.getElementsByClassName('content');
        const premsg = document.getElementById('premsg');
@@ -122,6 +160,7 @@ function createMsg(msg){
         if(msg.length>10)
          start = msg.length-10;
        for(let i =start;i<msg.length;i++){
+        if(!msg[i].isImage){
          const p = document.createElement('p');
          const details = `${msg[i].name}: <br> ${msg[i].msg}`;
            p.innerHTML = details;
@@ -133,6 +172,38 @@ function createMsg(msg){
            p.style.borderRadius = '10px';
            content[0].appendChild(p);
            window.scrollTo(0, document.body.scrollHeight);
+        }else{
+            const a = document.createElement('a');
+        const img = document.createElement('img');
+        
+         img.style.width = '100px'; // Set to your preferred width
+         img.style.height = 'auto'; // Maintain aspect ratio
+        // Set the image source using the provided imageURL
+        const imageURL = msg[i].msg; // Replace 'your-image-url.jpg' with the actual URL
+        img.src = imageURL;
+        img.alt = 'Image Alt Text'; // Provide alt text for accessibility
+        
+        // Set the link href to the image URL
+        a.href = imageURL;
+        
+        a.appendChild(img);
+        
+        // Add styling to the <a> tag
+        a.style.display = 'block'; // To make it a block element
+        a.style.backgroundColor = 'yellow';
+        a.style.padding = '10px';
+        a.style.width = '50%';
+        a.style.border = '1px solid black';
+        a.style.marginLeft = '10px';
+        a.style.borderRadius = '10px';
+        
+        // Append the <a> tag to the content container
+        content[0].appendChild(a);
+        
+        // Scroll to the bottom of the page
+        window.scrollTo(0, document.body.scrollHeight);
+        
+        }
        }
 
     }
@@ -145,7 +216,7 @@ formElements.message_btn.addEventListener('click', sendMsg);
 
 // var intervalId;
 
-function sendMsg(e){
+async function sendMsg(e){
 
     if (e.target && message_form.checkValidity()) {
     e.preventDefault();
@@ -163,7 +234,7 @@ function sendMsg(e){
         groupId:groupId
     }
     // document.getElementById('msg').value = '';
- axios.post(`http://localhost:4000/msg`,data,{headers:{"Authorization":token}})
+ await axios.post(`http://localhost:4000/msg`,data,{headers:{"Authorization":token}})
 .then(res => {
     const message = res.data.message.msg;
     console.log(res.data.message.msg);
@@ -190,8 +261,12 @@ function sendMsg(e){
             const formData = new FormData();
             formData.append('image', file);
             formData.append('GroupId',groupId)
-            const imageResponse = axios.post(`http://localhost:4000/image`,formData,{headers:{"Authorization":token}});
-            alert('Please select a valid image file.');
+            const imageResponse = await axios.post(`http://localhost:4000/image`,formData,{headers:{"Authorization":token}});
+            // alert('Please select a valid image file.');
+            console.log(imageResponse);
+            const image = imageResponse.data.imgval.msg;
+            const name = imageResponse.data.imgval.name;
+            socket.emit('image message',{image,name});
         }              
     }
 }
